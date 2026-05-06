@@ -3,6 +3,7 @@ package tech.iraelie.kubescope.models;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -34,4 +35,7 @@ public class NodeSnapshot {
 
     @Column(name = "hourly_cost_usd", precision = 10, scale = 4)
     private BigDecimal hourlyCostUsd;
+
+    @Column(nullable = false)
+    private Instant timestamp;
 }
