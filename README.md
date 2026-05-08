@@ -1,1 +1,1 @@
-# Kubescope
+# Kubescope - Kubernetes Cost & Observability Dashboard
