@@ -23,4 +23,9 @@ COPY --from=Builder /app/target/extracted/spring-boot-loader/ ./
 COPY --from=Builder /app/target/extracted/snapshot-dependencies/ ./
 COPY --from=Builder /app/target/extracted/application/ ./
 
-ENTRYPOINT ["org.springframework.boot.loader.launch.JarLauncher"]
+ENV JAVA_OPTS="-XX:+UseContainerSupport \
+               -XX:MaxRAMPercentage=75.0 \
+               -XX:+ExitOnOutOfMemoryError \
+               -Djava.security.egd=file:/dev/./urandom"
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS org.springframework.boot.loader.launch.JarLauncher"]
