@@ -1,0 +1,7 @@
+/target
+.env
+.gitattributes
+.gitignore
+.idea
+HELP.md
+app.log
