@@ -13,7 +13,7 @@ RUN java -Djarmode=layertools -jar target/*.jar extract --destination target/ext
 
 FROM eclipse-temurin:25-jre AS Runtime
 
-RUN addgroup -S spring && adduser -S spring -G spring
+RUN groupadd -S spring && useradd -S spring -G spring
 USER spring:spring
 
 WORKDIR /app
