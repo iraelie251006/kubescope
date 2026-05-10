@@ -1,0 +1,49 @@
+networks:
+  db-tier:
+    driver: bridge
+    internal: true
+  kubescope-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: practice
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - db-tier
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kubescope:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kubescope
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/practice
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      JWT_SECRET: dqIAICtALsJc8JOpKzkklNMMadpoHOvmBOXMEFKNu0A=
+      SPRING_PROFILES_ACTIVE: local
+      ACCESS_EXPIRATION_MS: 900000
+      REFRESH_EXPIRATION_MS: 604800000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - kubescope-network
+      - db-tier
+    ports:
+      - "3000:8080"
