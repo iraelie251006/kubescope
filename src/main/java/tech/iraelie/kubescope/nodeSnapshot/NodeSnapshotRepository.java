@@ -1,4 +1,4 @@
-package tech.iraelie.kubescope.models;
+package tech.iraelie.kubescope.nodeSnapshot;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
