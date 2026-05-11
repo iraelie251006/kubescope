@@ -1,4 +1,4 @@
-package tech.iraelie.kubescope.models;
+package tech.iraelie.kubescope.podSnapshot;
 
 import jakarta.persistence.*;
 import lombok.*;
