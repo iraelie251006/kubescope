@@ -1,4 +1,8 @@
 package tech.iraelie.kubescope.nameSpaceCost;
 
-public interface NamespaceCostSnapshotRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.UUID;
+
+public interface NamespaceCostSnapshotRepository extends JpaRepository<NamespaceCostSnapshot, UUID> {
 }
