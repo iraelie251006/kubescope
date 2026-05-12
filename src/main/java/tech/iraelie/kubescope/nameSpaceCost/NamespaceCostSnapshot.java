@@ -5,11 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "namespace_cost_snapshot")
 public class NamespaceCostSnapshot {
@@ -35,25 +39,4 @@ public class NamespaceCostSnapshot {
 
     @Column(name = "estimated_monthly_cost_usd", precision = 12, scale = 2)
     private BigDecimal estimatedMonthlyCostUsd;
-
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
-
-    public Instant getTimestamp() { return timestamp; }
-    public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }
-
-    public String getNamespace() { return namespace; }
-    public void setNamespace(String namespace) { this.namespace = namespace; }
-
-    public int getPodCount() { return podCount; }
-    public void setPodCount(int podCount) { this.podCount = podCount; }
-
-    public Long getCpuUsageMillicores() { return cpuUsageMillicores; }
-    public void setCpuUsageMillicores(Long cpuUsageMillicores) { this.cpuUsageMillicores = cpuUsageMillicores; }
-
-    public Long getMemoryUsageBytes() { return memoryUsageBytes; }
-    public void setMemoryUsageBytes(Long memoryUsageBytes) { this.memoryUsageBytes = memoryUsageBytes; }
-
-    public BigDecimal getEstimatedMonthlyCostUsd() { return estimatedMonthlyCostUsd; }
-    public void setEstimatedMonthlyCostUsd(BigDecimal estimatedMonthlyCostUsd) { this.estimatedMonthlyCostUsd = estimatedMonthlyCostUsd; }
 }
