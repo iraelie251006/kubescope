@@ -1,4 +1,4 @@
-package tech.iraelie.kubescope.nameSpaceCost;
+package tech.iraelie.kubescope.domain.nameSpaceCost;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

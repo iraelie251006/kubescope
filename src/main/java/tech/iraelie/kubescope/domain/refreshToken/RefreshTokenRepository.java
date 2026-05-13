@@ -1,4 +1,4 @@
-package tech.iraelie.kubescope.refreshToken;
+package tech.iraelie.kubescope.domain.refreshToken;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

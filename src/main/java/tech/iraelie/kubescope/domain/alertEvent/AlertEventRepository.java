@@ -1,4 +1,4 @@
-package tech.iraelie.kubescope.alertEvent;
+package tech.iraelie.kubescope.domain.alertEvent;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

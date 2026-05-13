@@ -1,4 +1,4 @@
-package tech.iraelie.kubescope.alertRule;
+package tech.iraelie.kubescope.domain.alertRule;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

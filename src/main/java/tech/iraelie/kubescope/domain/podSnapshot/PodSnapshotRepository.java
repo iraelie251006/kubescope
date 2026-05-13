@@ -1,4 +1,4 @@
-package tech.iraelie.kubescope.podSnapshot;
+package tech.iraelie.kubescope.domain.podSnapshot;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

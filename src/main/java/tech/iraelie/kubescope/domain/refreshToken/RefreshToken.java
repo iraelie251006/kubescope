@@ -1,4 +1,4 @@
-package tech.iraelie.kubescope.refreshToken;
+package tech.iraelie.kubescope.domain.refreshToken;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

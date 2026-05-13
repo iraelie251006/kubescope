@@ -1,4 +1,4 @@
-package tech.iraelie.kubescope.user;
+package tech.iraelie.kubescope.domain.user;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,4 +1,4 @@
-package tech.iraelie.kubescope.alertRule;
+package tech.iraelie.kubescope.domain.alertRule;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
