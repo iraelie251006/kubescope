@@ -1,12 +1,9 @@
 package tech.iraelie.kubescope.domain.refreshToken;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import tech.iraelie.kubescope.domain.user.User;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -35,4 +32,8 @@ public class RefreshToken {
 
     @Column(nullable = false)
     private boolean revoked = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }
