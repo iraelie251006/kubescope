@@ -1,15 +1,13 @@
 package tech.iraelie.kubescope.security;
 
-package io.kubescope.security;
-
-import io.kubescope.domain.User;
-import io.kubescope.domain.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import tech.iraelie.kubescope.domain.user.Role;
+import tech.iraelie.kubescope.domain.user.User;
 
 @Component
 public class AdminBootstrap implements CommandLineRunner {
@@ -40,8 +38,8 @@ public class AdminBootstrap implements CommandLineRunner {
         }
         User u = new User();
         u.setEmail(adminEmail);
-        u.setPasswordHash(encoder.encode(adminPassword));
-        u.setRole("ADMIN");
+        u.setPassword(encoder.encode(adminPassword));
+        u.setRole(Role.ADMIN);
         users.save(u);
         log.info("Bootstrapped admin user: {}", adminEmail);
     }
