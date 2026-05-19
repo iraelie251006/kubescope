@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tech.iraelie.kubescope.domain.user.User;
 import tech.iraelie.kubescope.domain.user.UserRepository;
 import tech.iraelie.kubescope.security.dto.AuthResponse;
+import tech.iraelie.kubescope.security.dto.LoginRequest;
+import tech.iraelie.kubescope.security.dto.RegisterRequest;
 
 
 @Slf4j
