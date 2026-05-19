@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.iraelie.kubescope.domain.user.User;
 import tech.iraelie.kubescope.domain.user.UserRepository;
+import tech.iraelie.kubescope.security.dto.AuthResponse;
 
 
 @Slf4j
