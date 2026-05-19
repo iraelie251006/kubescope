@@ -1,5 +1,12 @@
 package tech.iraelie.kubescope.config;
 
+import io.kubernetes.client.Metrics;
+import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.apis.AppsV1Api;
+import io.kubernetes.client.openapi.apis.CoreV1Api;
+import io.kubernetes.client.util.ClientBuilder;
+import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.KubeConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
