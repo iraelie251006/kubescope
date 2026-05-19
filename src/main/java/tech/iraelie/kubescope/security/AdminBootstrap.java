@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import tech.iraelie.kubescope.domain.user.Role;
 import tech.iraelie.kubescope.domain.user.User;
+import tech.iraelie.kubescope.domain.user.UserRepository;
 
 @Component
 public class AdminBootstrap implements CommandLineRunner {
