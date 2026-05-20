@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.iraelie.kubescope.domain.nodeSnapshot.NodeSnapshotRepository;
+import tech.iraelie.kubescope.domain.podSnapshot.PodSnapshotRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
