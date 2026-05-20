@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.iraelie.kubescope.domain.nameSpaceCost.NamespaceCostSnapshotRepository;
 import tech.iraelie.kubescope.domain.nodeSnapshot.NodeSnapshotRepository;
 import tech.iraelie.kubescope.domain.podSnapshot.PodSnapshotRepository;
 
