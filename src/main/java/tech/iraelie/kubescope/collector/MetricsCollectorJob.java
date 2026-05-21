@@ -1,24 +1,19 @@
 package tech.iraelie.kubescope.collector;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
+@RequiredArgsConstructor
 @Component
 @ConditionalOnProperty(name = "kubescope.collector.enabled", havingValue = "true", matchIfMissing = true)
 public class MetricsCollectorJob {
-
-    private static final Logger log = LoggerFactory.getLogger(MetricsCollectorJob.class);
-
     private final MetricsCollectorService service;
-
-    public MetricsCollectorJob(MetricsCollectorService service) {
-        this.service = service;
-    }
 
     @Scheduled(
             fixedDelayString = "${kubescope.collector.interval-seconds:60}",

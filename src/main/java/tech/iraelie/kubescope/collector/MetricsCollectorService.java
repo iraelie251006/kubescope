@@ -16,14 +16,19 @@ import io.kubernetes.client.openapi.models.V1Node;
 import io.kubernetes.client.openapi.models.V1NodeList;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1PodList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.iraelie.kubescope.domain.nameSpaceCost.NamespaceCostSnapshot;
 import tech.iraelie.kubescope.domain.nameSpaceCost.NamespaceCostSnapshotRepository;
+import tech.iraelie.kubescope.domain.nodeSnapshot.NodeSnapshot;
 import tech.iraelie.kubescope.domain.nodeSnapshot.NodeSnapshotRepository;
+import tech.iraelie.kubescope.domain.podSnapshot.PodSnapshot;
 import tech.iraelie.kubescope.domain.podSnapshot.PodSnapshotRepository;
+import tech.iraelie.kubescope.pricing.CostCalculator;
+import tech.iraelie.kubescope.pricing.PricingService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,10 +38,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class MetricsCollectorService {
-
-    private static final Logger log = LoggerFactory.getLogger(MetricsCollectorService.class);
 
     private static final String INSTANCE_TYPE_LABEL = "node.kubernetes.io/instance-type";
     private static final String REGION_LABEL = "topology.kubernetes.io/region";
@@ -51,22 +56,6 @@ public class MetricsCollectorService {
 
     @Value("${kubescope.pricing.default-region:us-east-1}")
     private String defaultRegion;
-
-    public MetricsCollectorService(CoreV1Api coreV1Api,
-                                   AppsV1Api appsV1Api,
-                                   Metrics metrics,
-                                   NodeSnapshotRepository nodeRepo,
-                                   PodSnapshotRepository podRepo,
-                                   NamespaceCostSnapshotRepository nsCostRepo,
-                                   PricingService pricing) {
-        this.coreV1Api = coreV1Api;
-        this.appsV1Api = appsV1Api;
-        this.metrics = metrics;
-        this.nodeRepo = nodeRepo;
-        this.podRepo = podRepo;
-        this.nsCostRepo = nsCostRepo;
-        this.pricing = pricing;
-    }
 
     @Transactional
     public void collect() throws ApiException {
