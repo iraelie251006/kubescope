@@ -26,6 +26,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -38,9 +41,11 @@ public class User implements UserDetails {
     private Role role = Role.ADMIN;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @Builder.Default
     private Instant createdAt = Instant.now();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
