@@ -1,8 +1,7 @@
 package tech.iraelie.kubescope.domain.refreshToken;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import tech.iraelie.kubescope.domain.user.User;
 
 import java.time.Instant;
@@ -10,6 +9,9 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "refresh_token")
 public class RefreshToken {
@@ -18,11 +20,11 @@ public class RefreshToken {
     @GeneratedValue
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
-
     @Column(name = "token_hash", nullable = false, unique = true)
     private String tokenHash;
+
+    @Column(nullable = false)
+    private String family;
 
     @Column(name = "issued_at", nullable = false)
     private Instant issuedAt = Instant.now();
