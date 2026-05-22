@@ -28,12 +28,14 @@ public class AlertEvent {
     private UUID alertRuleId;
 
     @Column(name = "fired_at", nullable = false)
+    @Builder.Default
     private Instant firedAt = Instant.now();
 
     @Column(name = "metric_value", nullable = false, precision = 12, scale = 2)
     private BigDecimal metricValue;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean notified = false;
 }
 
