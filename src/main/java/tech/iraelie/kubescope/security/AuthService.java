@@ -8,11 +8,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.iraelie.kubescope.domain.refreshToken.RefreshTokenService;
 import tech.iraelie.kubescope.domain.user.User;
 import tech.iraelie.kubescope.domain.user.UserRepository;
-import tech.iraelie.kubescope.security.dto.AuthResponse;
-import tech.iraelie.kubescope.security.dto.LoginRequest;
-import tech.iraelie.kubescope.security.dto.RegisterRequest;
+import tech.iraelie.kubescope.security.dto.*;
+import tech.iraelie.kubescope.security.exception.UserEmailAlreadyExistException;
+import tech.iraelie.kubescope.security.exception.UserNotFoundException;
 
 
 @Slf4j
@@ -33,7 +34,7 @@ public class AuthService implements AuthInterface {
 
         if (userRepository.existsByEmail(normalizedEmail)) {
             log.warn("Registration attempt with existing email");  // never log the email
-            throw new UserEmailAlreadyExistException();
+            throw new UserEmailAlreadyExistException("Email already exists");
         }
 
         User user = User.builder()
@@ -61,6 +62,11 @@ public class AuthService implements AuthInterface {
         );
 
         User user = (User) auth.getPrincipal();
+
+        if (user == null) {
+            log.warn("User is not found");
+            throw new UserNotFoundException("User is not found");
+        }
         log.info("User logged in userId={}", user.getId());
 
         return AuthResponse.builder()
@@ -72,7 +78,7 @@ public class AuthService implements AuthInterface {
     @Override
     public void logout(User user) {
         // Principal is already the authenticated User entity — no DB call needed
-        refreshTokenService.revokeAllUserTokens(user.getId());
+        refreshTokenService.revokeAllUserTokens(user.getId().toString());
         log.info("User logged out userId={}", user.getId());
     }
 
