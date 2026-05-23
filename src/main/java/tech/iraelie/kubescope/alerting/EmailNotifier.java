@@ -1,5 +1,6 @@
 package tech.iraelie.kubescope.alerting;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -8,17 +9,13 @@ import tech.iraelie.kubescope.domain.alertRule.AlertRule;
 
 import java.math.BigDecimal;
 
+@RequiredArgsConstructor
 @Service
 public class EmailNotifier {
-
     private final JavaMailSender mailSender;
 
     @Value("${kubescope.alerts.from-email}")
     private String fromEmail;
-
-    public EmailNotifier(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
 
     public void send(AlertRule rule, BigDecimal value) {
         SimpleMailMessage msg = new SimpleMailMessage();
