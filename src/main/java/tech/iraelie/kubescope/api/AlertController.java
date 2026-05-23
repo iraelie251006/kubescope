@@ -27,19 +27,22 @@ public class AlertController {
     private final AlertRuleRepository repo;
 
     @GetMapping
-    public List<AlertRuleResponse> list() {
-        return repo.findAll().stream().map(AlertRuleResponse::of).toList();
+    public ResponseEntity<List<AlertRuleResponse>> list() {
+        List<AlertRuleResponse> alertRuleResponseList =
+                repo.findAll().stream().map(AlertRuleResponse::of).toList();
+        return ResponseEntity.ok().body(alertRuleResponseList);
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public AlertRuleResponse create(@Valid @RequestBody CreateAlertRuleRequest req) {
+    public ResponseEntity<AlertRuleResponse> create(@Valid @RequestBody CreateAlertRuleRequest req) {
         AlertRule rule = new AlertRule();
         rule.setMetricType(req.metricType());
         rule.setCondition(req.condition());
         rule.setThresholdValue(req.thresholdValue());
         rule.setNotificationEmail(req.notificationEmail());
-        return AlertRuleResponse.of(repo.save(rule));
+        AlertRule response = repo.save(rule);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")
