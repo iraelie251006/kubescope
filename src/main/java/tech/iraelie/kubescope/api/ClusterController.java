@@ -2,6 +2,7 @@ package tech.iraelie.kubescope.api;
 
 import io.kubernetes.client.openapi.ApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,23 +21,27 @@ public class ClusterController {
     private final ClusterReadService reads;
 
     @GetMapping("/overview")
-    public ClusterOverviewResponse overview() {
-        return reads.overview();
+    public ResponseEntity<ClusterOverviewResponse> overview() {
+        ClusterOverviewResponse overviewResponse = reads.overview();
+        return ResponseEntity.ok().body(overviewResponse);
     }
 
     @GetMapping("/nodes")
-    public List<NodeResponse> nodes() {
-        return reads.nodes();
+    public ResponseEntity<List<NodeResponse>> nodes() {
+        List<NodeResponse> nodes = reads.nodes();
+        return ResponseEntity.ok().body(nodes);
     }
 
     @GetMapping("/namespaces")
-    public List<NamespaceResponse> namespaces() {
-        return reads.namespaces();
+    public ResponseEntity<List<NamespaceResponse>> namespaces() {
+        List<NamespaceResponse> namespaces = reads.namespaces();
+        return ResponseEntity.ok().body(namespaces);
     }
 
     @GetMapping("/deployments")
-    public List<DeploymentResponse> deployments() throws ApiException {
-        return reads.deployments();
+    public ResponseEntity<List<DeploymentResponse>> deployments() throws ApiException {
+        List<DeploymentResponse> deployments = reads.deployments();
+        return ResponseEntity.ok().body(deployments);
     }
 }
 
