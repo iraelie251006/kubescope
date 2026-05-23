@@ -46,3 +46,30 @@ management:
     health:
       probes:
         enabled: true
+
+kubescope:
+  kubernetes:
+    # Path to a kubeconfig file. Leave blank to fall back to the default
+    # (~/.kube/config) or in-cluster config when in-cluster=true.
+    kubeconfig-path: ${KUBECONFIG_PATH:}
+    in-cluster: ${IN_CLUSTER:false}
+  collector:
+    enabled: ${COLLECTOR_ENABLED:true}
+    interval-seconds: ${METRICS_COLLECTION_INTERVAL_SECONDS:60}
+  pricing:
+    aws-api-enabled: ${AWS_PRICING_API_ENABLED:false}
+    aws-region: ${AWS_REGION:us-east-1}
+    default-region: ${AWS_REGION:us-east-1}
+  jwt:
+    secret: ${JWT_SECRET:change-me-change-me-change-me-change-me-change-me-change-me}
+    access-token-expiry-hours: ${JWT_EXPIRY_HOURS:24}
+    refresh-token-expiry-days: ${JWT_REFRESH_EXPIRY_DAYS:30}
+    issuer: kubescope
+  admin:
+    email: ${ADMIN_EMAIL:}
+    password: ${ADMIN_PASSWORD:}
+  alerts:
+    enabled: ${ALERTS_ENABLED:true}
+    evaluation-interval-seconds: ${ALERT_EVALUATION_INTERVAL_SECONDS:300}
+    cooldown-minutes: ${ALERT_COOLDOWN_MINUTES:60}
+    from-email: ${ALERT_FROM_EMAIL:alerts@kubescope.io}
