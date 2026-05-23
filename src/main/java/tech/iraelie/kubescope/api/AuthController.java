@@ -17,6 +17,7 @@ import tech.iraelie.kubescope.security.dto.AuthResponse;
 import tech.iraelie.kubescope.security.dto.LoginRequest;
 import tech.iraelie.kubescope.security.dto.RefreshRequest;
 import tech.iraelie.kubescope.security.dto.RegisterRequest;
+import tech.iraelie.kubescope.security.exception.TokenException;
 
 import java.time.Duration;
 
