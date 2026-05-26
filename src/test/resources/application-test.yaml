@@ -1,0 +1,65 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:kubescope-test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+    open-in-view: false
+
+  flyway:
+    enabled: false
+
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
+
+  mail:
+    host: localhost
+    port: 25
+
+  security:
+    jwt:
+      # 32-byte (256-bit) key, base64 encoded — required for HS256
+      secret: dGVzdC1zZWNyZXQta2V5LXRoaXJ0eXR3by1ieXRlcy1sb25nLWtleQ==
+      expiration-ms: 900000
+      refresh-expiration-ms: 604800000
+
+kubescope:
+  kubernetes:
+    kubeconfig-path: ""
+    in-cluster: false
+  collector:
+    enabled: false
+    interval-seconds: 60
+  pricing:
+    aws-api-enabled: false
+    aws-region: us-east-1
+    default-region: us-east-1
+  jwt:
+    secret: dGVzdC1zZWNyZXQta2V5LXRoaXJ0eXR3by1ieXRlcy1sb25nLWtleQ==
+    access-token-expiry-hours: 24
+    refresh-token-expiry-days: 30
+    issuer: kubescope
+  admin:
+    email: ""
+    password: ""
+  alerts:
+    enabled: false
+    evaluation-interval-seconds: 300
+    cooldown-minutes: 60
+    from-email: alerts@kubescope.test
