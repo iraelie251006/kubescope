@@ -24,7 +24,7 @@ import java.time.Duration;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     private final AuthInterface authService;
@@ -34,7 +34,7 @@ public class AuthController {
             @Valid @RequestBody RegisterRequest request,
             HttpServletResponse response) {
 
-        MDC.put("endpoint", "POST /api/auth/register");
+        MDC.put("endpoint", "POST /api/v1/auth/register");
         try {
             log.info("Request received");
             AuthResponse auth = authService.register(request);
@@ -51,7 +51,7 @@ public class AuthController {
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse response) {
 
-        MDC.put("endpoint", "POST /api/auth/login");
+        MDC.put("endpoint", "POST /api/v1/auth/login");
         try {
             log.info("Request received");
             AuthResponse auth = authService.login(request);
@@ -68,7 +68,7 @@ public class AuthController {
             @CookieValue(name = "refresh_token", required = false) String refreshToken,
             HttpServletResponse response) {
 
-        MDC.put("endpoint", "POST /api/auth/refresh");
+        MDC.put("endpoint", "POST /api/v1/auth/refresh");
         try {
             if (refreshToken == null) {
                 // Throw so GlobalExceptionHandler returns a properly shaped ErrorResponse
@@ -89,7 +89,7 @@ public class AuthController {
             @AuthenticationPrincipal User user,
             HttpServletResponse response) {
 
-        MDC.put("endpoint", "POST /api/auth/logout");
+        MDC.put("endpoint", "POST /api/v1/auth/logout");
         if (user != null) MDC.put("userId", String.valueOf(user.getId()));
         try {
             log.info("Request received");
@@ -112,7 +112,7 @@ public class AuthController {
 
         response.addHeader(HttpHeaders.SET_COOKIE,
                 ResponseCookie.from("refresh_token", refreshToken)
-                        .httpOnly(true).secure(true).path("/api/auth/refresh")
+                        .httpOnly(true).secure(true).path("/api/v1/auth/refresh")
                         .maxAge(Duration.ofDays(7)).sameSite("None")
                         .build().toString());
     }
@@ -126,7 +126,7 @@ public class AuthController {
 
         response.addHeader(HttpHeaders.SET_COOKIE,
                 ResponseCookie.from("refresh_token", "")
-                        .httpOnly(true).secure(true).path("/api/auth/refresh")
+                        .httpOnly(true).secure(true).path("/api/v1/auth/refresh")
                         .maxAge(Duration.ZERO).sameSite("None")
                         .build().toString());
     }
