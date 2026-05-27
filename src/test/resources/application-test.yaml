@@ -1,4 +1,7 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
+
   datasource:
     url: jdbc:h2:mem:kubescope-test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
     driver-class-name: org.h2.Driver
@@ -19,18 +22,27 @@ spring:
 
   data:
     redis:
+      host: localhost
+      port: 6379
       repositories:
         enabled: false
 
   autoconfigure:
     exclude:
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
-      - org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
+      - org.springframework.boot.data.redis.autoconfigure.RedisAutoConfiguration
+      - org.springframework.boot.data.redis.autoconfigure.RedisRepositoriesAutoConfiguration
 
   mail:
     host: localhost
     port: 25
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
 
   security:
     jwt:
@@ -41,7 +53,7 @@ spring:
 
 kubescope:
   kubernetes:
-    kubeconfig-path: ""
+    # Path is set programmatically in IntegrationTestSupport's static initializer
     in-cluster: false
   collector:
     enabled: false
