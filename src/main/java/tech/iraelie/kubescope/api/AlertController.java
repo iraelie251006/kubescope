@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import tech.iraelie.kubescope.api.dto.AlertRuleResponse;
 import tech.iraelie.kubescope.api.dto.CreateAlertRuleRequest;
@@ -40,7 +39,9 @@ public class AlertController {
         rule.setCondition(req.condition());
         rule.setThresholdValue(req.thresholdValue());
         rule.setNotificationEmail(req.notificationEmail());
-        AlertRule response = repo.save(rule);
+        AlertRule saved = repo.save(rule);
+
+        AlertRuleResponse response = AlertRuleResponse.of(saved);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
