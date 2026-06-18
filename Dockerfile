@@ -1,4 +1,4 @@
-FROM eclipse-temurin:25-jdk AS Builder
+FROM eclipse-temurin:25-jdk AS builder
 
 WORKDIR /app
 
@@ -11,17 +11,17 @@ RUN ./mvnw package -DskipTests -q
 
 RUN java -Djarmode=layertools -jar target/*.jar extract --destination target/extracted
 
-FROM eclipse-temurin:25-jre AS Runtime
+FROM eclipse-temurin:25-jre AS runtime
 
-RUN groupadd -S spring && useradd -S spring -G spring
+RUN groupadd -r spring && useradd -r -g spring spring
 USER spring:spring
 
 WORKDIR /app
 
-COPY --from=Builder /app/target/extracted/dependencies/ ./
-COPY --from=Builder /app/target/extracted/spring-boot-loader/ ./
-COPY --from=Builder /app/target/extracted/snapshot-dependencies/ ./
-COPY --from=Builder /app/target/extracted/application/ ./
+COPY --from=builder /app/target/extracted/dependencies/ ./
+COPY --from=builder /app/target/extracted/spring-boot-loader/ ./
+COPY --from=builder /app/target/extracted/snapshot-dependencies/ ./
+COPY --from=builder /app/target/extracted/application/ ./
 
 ENV JAVA_OPTS="-XX:+UseContainerSupport \
                -XX:MaxRAMPercentage=75.0 \
