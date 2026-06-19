@@ -37,6 +37,12 @@ spring:
           starttls:
             enable: ${SMTP_STARTTLS:true}
 
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+      expiration-ms: ${ACCESS_EXPIRATION_MS:900000}
+      refresh-expiration-ms: ${REFRESH_EXPIRATION_MS:604800000}
+
 management:
   endpoints:
     web:
@@ -60,11 +66,6 @@ kubescope:
     aws-api-enabled: ${AWS_PRICING_API_ENABLED:false}
     aws-region: ${AWS_REGION:us-east-1}
     default-region: ${AWS_REGION:us-east-1}
-  jwt:
-    secret: ${JWT_SECRET:change-me-change-me-change-me-change-me-change-me-change-me}
-    access-token-expiry-hours: ${JWT_EXPIRY_HOURS:24}
-    refresh-token-expiry-days: ${JWT_REFRESH_EXPIRY_DAYS:30}
-    issuer: kubescope
   admin:
     email: ${ADMIN_EMAIL:}
     password: ${ADMIN_PASSWORD:}
