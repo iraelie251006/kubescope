@@ -1,6 +1,5 @@
 package tech.iraelie.kubescope.security;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import tech.iraelie.kubescope.domain.user.UserRepository;
 
 import java.util.List;
 
@@ -28,13 +29,13 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
-    private final UserDetailsService userDetailsService;
-    private final JwtAuthFilter jwtAuthFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            AuthenticationProvider authenticationProvider,
+            JwtAuthFilter jwtAuthFilter) throws Exception {
         http.cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         auth -> auth
@@ -48,15 +49,23 @@ public class SecurityConfig {
                 ).addFilterBefore(
                         jwtAuthFilter,
                         UsernamePasswordAuthenticationFilter.class
-                ).authenticationProvider(authenticationProvider());
+                ).authenticationProvider(authenticationProvider);
 
         return http.build();
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public UserDetailsService userDetailsService(UserRepository users) {
+        return username -> users.findByEmail(username)
+                .map(u -> (org.springframework.security.core.userdetails.UserDetails) u)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider(
+            UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
+        provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
 
