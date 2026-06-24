@@ -1,7 +1,7 @@
 package tech.iraelie.kubescope.pricing;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -17,14 +17,14 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class PricingFallback {
-    private final ObjectMapper objectMapper;
+public class                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          PricingFallback {
+    private final JsonMapper jsonMapper;
     private Map<String, Map<String, BigDecimal>> table = Map.of();
 
     @PostConstruct
     void load() {
         try (InputStream in = new ClassPathResource("pricing/ec2-fallback.json").getInputStream()) {
-            JsonNode root = objectMapper.readTree(in);
+            JsonNode root = jsonMapper.readTree(in);
             JsonNode regions = root.path("regions");
             Map<String, Map<String, BigDecimal>> built = new HashMap<>();
             for (Map.Entry<String, JsonNode> region : regions.properties()) {
