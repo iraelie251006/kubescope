@@ -7,6 +7,7 @@ import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.util.ClientBuilder;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.KubeConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.FileReader;
 import java.io.IOException;
 
+@Slf4j
 @Configuration
 public class KubernetesConfig {
 
@@ -33,7 +35,14 @@ public class KubernetesConfig {
                 return ClientBuilder.kubeconfig(KubeConfig.loadKubeConfig(reader)).build();
             }
         }
-        return Config.defaultClient();
+        try {
+            return Config.defaultClient();
+        } catch (IllegalArgumentException | IOException e) {
+            log.warn("No usable kubeconfig found ({}). Returning a stub ApiClient — " +
+                    "set IN_CLUSTER=true or KUBECONFIG_PATH for real cluster access, " +
+                    "or COLLECTOR_ENABLED=false to silence collector errors.", e.getMessage());
+            return new ApiClient();
+        }
     }
 
     @Bean
