@@ -1,7 +1,7 @@
 package tech.iraelie.kubescope.pricing;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -27,7 +27,7 @@ public class AwsPricingService implements PricingService {
     private final ObjectProvider<PricingClient> pricingClientProvider;
     private final PricingFallback fallback;
     private final StringRedisTemplate redis;
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     @Value("${kubescope.pricing.aws-api-enabled:false}")
     private boolean apiEnabled;
@@ -90,7 +90,7 @@ public class AwsPricingService implements PricingService {
 
     Optional<BigDecimal> parseOnDemandUsd(String priceListJson) {
         try {
-            JsonNode root = objectMapper.readTree(priceListJson);
+            JsonNode root = jsonMapper.readTree(priceListJson);
             JsonNode onDemand = root.path("terms").path("OnDemand");
             for (Map.Entry<String, JsonNode> term : onDemand.properties()) {
                 JsonNode dims = term.getValue().path("priceDimensions");
