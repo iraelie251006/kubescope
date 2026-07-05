@@ -1,6 +1,6 @@
 package tech.iraelie.kubescope.pricing;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +41,7 @@ class AwsPricingServiceTest {
     @Mock private ValueOperations<String, String> valueOps;
 
     private AwsPricingService service;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final JsonMapper mapper = JsonMapper.builder().build();
 
     @BeforeEach
     void setUp() {
