@@ -17,7 +17,7 @@ class PricingFallbackTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        fallback = new PricingFallback(new ObjectMapper());
+        fallback = new PricingFallback(JsonMapper.builder().build());
         Method load = PricingFallback.class.getDeclaredMethod("load");
         load.setAccessible(true);
         load.invoke(fallback);
