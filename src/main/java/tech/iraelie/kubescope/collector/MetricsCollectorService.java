@@ -27,6 +27,7 @@ import tech.iraelie.kubescope.domain.nodeSnapshot.NodeSnapshot;
 import tech.iraelie.kubescope.domain.nodeSnapshot.NodeSnapshotRepository;
 import tech.iraelie.kubescope.domain.podSnapshot.PodSnapshot;
 import tech.iraelie.kubescope.domain.podSnapshot.PodSnapshotRepository;
+import tech.iraelie.kubescope.metrics.ClusterMetricsPublisher;
 import tech.iraelie.kubescope.pricing.CostCalculator;
 import tech.iraelie.kubescope.pricing.PricingService;
 
@@ -53,6 +54,7 @@ public class MetricsCollectorService {
     private final PodSnapshotRepository podRepo;
     private final NamespaceCostSnapshotRepository nsCostRepo;
     private final PricingService pricing;
+    private final ClusterMetricsPublisher metricsPublisher;
 
     @Value("${kubescope.pricing.default-region:us-east-1}")
     private String defaultRegion;
@@ -65,6 +67,8 @@ public class MetricsCollectorService {
         Map<String, PodMetrics> podUsage = fetchPodMetrics();
 
         BigDecimal clusterHourlyCost = BigDecimal.ZERO;
+        long clusterCpuCapacity = 0;
+        long clusterMemoryCapacity = 0;
         List<NodeSnapshot> savedNodes = new ArrayList<>();
         V1NodeList nodes = coreV1Api.listNode().execute();
         for (V1Node node : nodes.getItems()) {
@@ -75,11 +79,14 @@ public class MetricsCollectorService {
             if (snap.getHourlyCostUsd() != null) {
                 clusterHourlyCost = clusterHourlyCost.add(snap.getHourlyCostUsd());
             }
+            if (snap.getCpuCapacityMillicores() != null) clusterCpuCapacity += snap.getCpuCapacityMillicores();
+            if (snap.getMemoryCapacityBytes() != null) clusterMemoryCapacity += snap.getMemoryCapacityBytes();
         }
 
         long clusterCpuUsage = 0;
         long clusterMemoryUsage = 0;
         Map<String, NamespaceAggregate> byNamespace = new HashMap<>();
+        Map<String, Long> podsByPhase = new HashMap<>();
         V1PodList pods = coreV1Api.listPodForAllNamespaces().execute();
         for (V1Pod pod : pods.getItems()) {
             PodSnapshot snap = buildPodSnapshot(pod, podUsage.get(podKey(pod)), ts);
@@ -94,6 +101,8 @@ public class MetricsCollectorService {
                 agg.memoryUsage += snap.getMemoryUsageBytes();
                 clusterMemoryUsage += snap.getMemoryUsageBytes();
             }
+            String phase = snap.getPhase() != null ? snap.getPhase() : "Unknown";
+            podsByPhase.merge(phase, 1L, Long::sum);
         }
 
         BigDecimal clusterMonthlyCost = CostCalculator.monthlyFromHourly(clusterHourlyCost);
@@ -110,7 +119,14 @@ public class MetricsCollectorService {
             ns.setMemoryUsageBytes(agg.memoryUsage);
             ns.setEstimatedMonthlyCostUsd(monthly);
             nsCostRepo.save(ns);
+
+            metricsPublisher.publishNamespace(e.getKey(), agg.cpuUsage, agg.memoryUsage, agg.podCount, monthly);
         }
+        metricsPublisher.pruneNamespaces(byNamespace.keySet());
+        metricsPublisher.publishPodPhases(podsByPhase);
+        metricsPublisher.publishClusterSummary(savedNodes.size(), pods.getItems().size(), byNamespace.size(),
+                clusterCpuUsage, clusterCpuCapacity, clusterMemoryUsage, clusterMemoryCapacity,
+                clusterHourlyCost, clusterMonthlyCost);
 
         // Deployments observed for trend logging; per-deployment cost is derived on read in the API layer.
         V1DeploymentList deployments = appsV1Api.listDeploymentForAllNamespaces().execute();
