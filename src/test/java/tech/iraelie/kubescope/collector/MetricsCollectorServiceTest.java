@@ -32,6 +32,7 @@ import tech.iraelie.kubescope.domain.nodeSnapshot.NodeSnapshot;
 import tech.iraelie.kubescope.domain.nodeSnapshot.NodeSnapshotRepository;
 import tech.iraelie.kubescope.domain.podSnapshot.PodSnapshot;
 import tech.iraelie.kubescope.domain.podSnapshot.PodSnapshotRepository;
+import tech.iraelie.kubescope.metrics.ClusterMetricsPublisher;
 import tech.iraelie.kubescope.pricing.PricingService;
 
 import java.math.BigDecimal;
@@ -56,6 +57,7 @@ class MetricsCollectorServiceTest {
     @Mock private PodSnapshotRepository podRepo;
     @Mock private NamespaceCostSnapshotRepository nsCostRepo;
     @Mock private PricingService pricing;
+    @Mock private ClusterMetricsPublisher metricsPublisher;
 
     @InjectMocks private MetricsCollectorService service;
 
