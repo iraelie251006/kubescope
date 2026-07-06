@@ -1,11 +1,14 @@
 package tech.iraelie.kubescope.alerting;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import tech.iraelie.kubescope.api.ClusterReadService;
@@ -37,6 +40,7 @@ class AlertEvaluatorTest {
     @Mock private AlertEventRepository eventRepo;
     @Mock private ClusterReadService reads;
     @Mock private EmailNotifier mailer;
+    @Spy private MeterRegistry meterRegistry = new SimpleMeterRegistry();
     @InjectMocks private AlertEvaluator evaluator;
 
     @BeforeEach
@@ -88,6 +92,8 @@ class AlertEvaluatorTest {
         assertThat(eventCap.getValue().getMetricValue()).isEqualByComparingTo("150.00");
         verify(ruleRepo).save(r);
         assertThat(r.getLastFiredAt()).isNotNull();
+        assertThat(meterRegistry.counter("kubescope_alerts_fired_total", "metric_type", "MONTHLY_COST").count())
+                .isEqualTo(1.0);
     }
 
     @Test
