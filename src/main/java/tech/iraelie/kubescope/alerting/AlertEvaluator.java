@@ -1,5 +1,6 @@
 package tech.iraelie.kubescope.alerting;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,7 @@ public class AlertEvaluator {
     private final AlertEventRepository eventRepo;
     private final ClusterReadService reads;
     private final EmailNotifier mailer;
+    private final MeterRegistry meterRegistry;
 
     @Value("${kubescope.alerts.cooldown-minutes:60}")
     private long cooldownMinutes;
@@ -62,6 +64,8 @@ public class AlertEvaluator {
 
             rule.setLastFiredAt(now);
             ruleRepo.save(rule);
+            meterRegistry.counter("kubescope_alerts_fired_total", "metric_type", rule.getMetricType().name())
+                    .increment();
             log.info("Alert fired: rule={} metric={} value={} threshold={}",
                     rule.getId(), rule.getMetricType(), value, rule.getThresholdValue());
         }
