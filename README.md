@@ -66,7 +66,8 @@ flowchart LR
 - JWT authentication with refresh-token rotation and reuse detection (rotated families are revoked on suspected theft).
 - Admin bootstrap on first boot from environment variables.
 - Flyway-managed schema with four migrations covering users, snapshots, alerts, and refresh-token families.
-- Prometheus endpoint at `/actuator/prometheus` for scraping by an upstream Grafana stack.
+- Prometheus endpoint at `/actuator/prometheus` exposing cluster, namespace, and pod-phase gauges (not just JVM/HTTP metrics) — see [Monitoring](#monitoring-with-prometheus--grafana).
+- Bundled Prometheus + Grafana stack via `docker-compose.yml`, with an auto-provisioned "Kubescope Overview" dashboard.
 
 ---
 
@@ -113,6 +114,8 @@ The API listens on `http://localhost:3000`. Postgres is provisioned automaticall
 
 By default Kubescope reads `~/.kube/config` for cluster access. To point it at a specific kubeconfig, set `KUBECONFIG_PATH` in `docker-compose.yml`. To disable cluster polling for a dry-run, set `COLLECTOR_ENABLED=false`.
 
+`docker compose up` also brings up Redis (session/rate-limit store), Prometheus, and Grafana alongside Postgres and the API — see [Monitoring](#monitoring-with-prometheus--grafana) below.
+
 ### Run from source
 
 ```bash
@@ -120,6 +123,48 @@ By default Kubescope reads `~/.kube/config` for cluster access. To point it at a
 ```
 
 Requires JDK 25, a reachable Postgres, and either a kubeconfig file or `IN_CLUSTER=true` when running as a pod with a service account.
+
+---
+
+## Monitoring with Prometheus & Grafana
+
+`docker compose up` starts a full observability stack alongside the API:
+
+| Service | URL | Notes |
+|---------|-----|-------|
+| Kubescope API | http://localhost:3000 | `/actuator/prometheus` is the scrape target. |
+| Prometheus | http://localhost:9091 | Pre-configured with a single scrape job (`kubescope`), 15s interval. |
+| Grafana | http://localhost:3001 | Login `admin` / `admin` (change it — see `GF_SECURITY_ADMIN_PASSWORD` in `docker-compose.yml`). The Prometheus datasource and a "Kubescope Overview" dashboard are provisioned automatically; no manual setup required. |
+
+Config for the stack lives under `monitoring/`:
+
+```
+monitoring/
+├── prometheus/prometheus.yml                        # scrape config
+└── grafana/
+    ├── provisioning/datasources/datasource.yml       # Prometheus datasource
+    ├── provisioning/dashboards/dashboards.yml         # dashboard provider
+    └── dashboards/kubescope-overview.json             # the dashboard itself
+```
+
+### Custom metrics
+
+Beyond the JVM/HTTP metrics Spring Boot Actuator exposes by default, Kubescope publishes the same data it persists to Postgres as Micrometer gauges/counters on every collector run, so Prometheus and Grafana see live cluster state:
+
+| Metric | Type | Labels | Description |
+|--------|------|--------|--------------|
+| `kubescope_cluster_nodes` / `_pods` / `_namespaces` | gauge | — | Counts observed in the latest collection cycle. |
+| `kubescope_cluster_cpu_usage_millicores` / `_cpu_capacity_millicores` | gauge | — | Cluster-wide CPU usage and capacity. |
+| `kubescope_cluster_memory_usage_bytes` / `_memory_capacity_bytes` | gauge | — | Cluster-wide memory usage and capacity. |
+| `kubescope_cluster_cpu_usage_percent` / `_memory_usage_percent` | gauge | — | Usage as a percentage of capacity. |
+| `kubescope_cluster_hourly_cost_usd` / `_monthly_cost_usd` | gauge | — | Estimated cluster cost. |
+| `kubescope_namespace_cpu_usage_millicores` / `_memory_usage_bytes` / `_pods` / `_monthly_cost_usd` | gauge | `namespace` | Per-namespace breakdown. |
+| `kubescope_pods_by_phase` | gauge | `phase` | Pod count grouped by lifecycle phase (`Running`, `Pending`, etc). |
+| `kubescope_alerts_fired_total` | counter | `metric_type` | Incremented each time an alert rule fires. |
+
+Namespace and pod-phase series are pruned once their key stops appearing in a collection cycle, so removed namespaces don't leave stale series behind.
+
+Anonymous scraping is intentional: `/actuator/health/**`, `/actuator/info`, and `/actuator/prometheus` are permitted without auth in `SecurityConfig` so Prometheus doesn't need credentials — don't expose the API publicly without a reverse proxy in front of it.
 
 ---
 
