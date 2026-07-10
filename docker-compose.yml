@@ -7,8 +7,21 @@ networks:
 
 volumes:
   postgres_data:
+  prometheus_data:
+  grafana_data:
 
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: kubescope-redis
+    networks:
+      - db-tier
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   postgres:
     image: postgres:17-alpine
     container_name: postgres
@@ -35,6 +48,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/practice
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       JWT_SECRET: dqIAICtALsJc8JOpKzkklNMMadpoHOvmBOXMEFKNu0A=
       SPRING_PROFILES_ACTIVE: local
       ACCESS_EXPIRATION_MS: 900000
@@ -42,8 +57,41 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - kubescope-network
       - db-tier
     ports:
       - "3000:8080"
+
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    container_name: kubescope-prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - kubescope-network
+    ports:
+      - "9091:9090"
+    depends_on:
+      - kubescope
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: kubescope-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - kubescope-network
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
