@@ -1,0 +1,156 @@
+{
+  "title": "Kubescope Overview",
+  "uid": "kubescope-overview",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "timezone": "browser",
+  "time": { "from": "now-6h", "to": "now" },
+  "refresh": "30s",
+  "templating": {
+    "list": [
+      {
+        "name": "DS_PROMETHEUS",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": {},
+        "hide": 0,
+        "label": "Datasource"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Nodes",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [{ "expr": "kubescope_cluster_nodes", "refId": "A" }]
+    },
+    {
+      "id": 2,
+      "title": "Pods",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [{ "expr": "kubescope_cluster_pods", "refId": "A" }]
+    },
+    {
+      "id": 3,
+      "title": "Namespaces",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [{ "expr": "kubescope_cluster_namespaces", "refId": "A" }]
+    },
+    {
+      "id": 4,
+      "title": "Cluster hourly cost (USD)",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "currencyUSD", "decimals": 4 }, "overrides": [] },
+      "targets": [{ "expr": "kubescope_cluster_hourly_cost_usd", "refId": "A" }]
+    },
+    {
+      "id": 5,
+      "title": "Cluster monthly cost (USD)",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "currencyUSD", "decimals": 2 }, "overrides": [] },
+      "targets": [{ "expr": "kubescope_cluster_monthly_cost_usd", "refId": "A" }]
+    },
+    {
+      "id": 6,
+      "title": "CPU usage vs capacity (millicores)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        { "expr": "kubescope_cluster_cpu_usage_millicores", "legendFormat": "usage", "refId": "A" },
+        { "expr": "kubescope_cluster_cpu_capacity_millicores", "legendFormat": "capacity", "refId": "B" }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Memory usage vs capacity (bytes)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "targets": [
+        { "expr": "kubescope_cluster_memory_usage_bytes", "legendFormat": "usage", "refId": "A" },
+        { "expr": "kubescope_cluster_memory_capacity_bytes", "legendFormat": "capacity", "refId": "B" }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "CPU / Memory usage %",
+      "type": "gauge",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100 }, "overrides": [] },
+      "targets": [
+        { "expr": "kubescope_cluster_cpu_usage_percent", "legendFormat": "cpu", "refId": "A" },
+        { "expr": "kubescope_cluster_memory_usage_percent", "legendFormat": "memory", "refId": "B" }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Pods by phase",
+      "type": "piechart",
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [{ "expr": "kubescope_pods_by_phase", "legendFormat": "{{phase}}", "refId": "A" }]
+    },
+    {
+      "id": 10,
+      "title": "Estimated monthly cost by namespace (USD)",
+      "type": "bargauge",
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "currencyUSD" }, "overrides": [] },
+      "targets": [{ "expr": "kubescope_namespace_monthly_cost_usd", "legendFormat": "{{namespace}}", "refId": "A" }]
+    },
+    {
+      "id": 11,
+      "title": "CPU usage by namespace (millicores)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [{ "expr": "kubescope_namespace_cpu_usage_millicores", "legendFormat": "{{namespace}}", "refId": "A" }]
+    },
+    {
+      "id": 12,
+      "title": "Memory usage by namespace (bytes)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "targets": [{ "expr": "kubescope_namespace_memory_usage_bytes", "legendFormat": "{{namespace}}", "refId": "A" }]
+    },
+    {
+      "id": 13,
+      "title": "Alerts fired (rate over 1h)",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 26 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        { "expr": "increase(kubescope_alerts_fired_total[1h])", "legendFormat": "{{metric_type}}", "refId": "A" }
+      ]
+    },
+    {
+      "id": 14,
+      "title": "JVM heap used (bytes)",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 26 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "targets": [
+        { "expr": "jvm_memory_used_bytes{area=\"heap\", application=\"kubescope-backend\"}", "legendFormat": "{{id}}", "refId": "A" }
+      ]
+    }
+  ]
+}
