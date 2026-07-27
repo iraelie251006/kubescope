@@ -54,6 +54,13 @@ services:
       SPRING_PROFILES_ACTIVE: local
       ACCESS_EXPIRATION_MS: 900000
       REFRESH_EXPIRATION_MS: 604800000
+      # No Kubernetes cluster is wired into this stack; disable the collector so it
+      # doesn't log errors every cycle. Set to true and add KUBECONFIG_PATH/IN_CLUSTER
+      # to enable real metrics collection.
+      COLLECTOR_ENABLED: "false"
+      # Seed an admin account on first boot so the API is usable out of the box.
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@kubescope.io}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin12345}
     depends_on:
       postgres:
         condition: service_healthy
@@ -63,7 +70,8 @@ services:
       - kubescope-network
       - db-tier
     ports:
-      - "3000:8080"
+      # Override the host port via APP_PORT (e.g. in .env) if 3000 is taken.
+      - "${APP_PORT:-3000}:8080"
 
   prometheus:
     image: prom/prometheus:v3.1.0
@@ -74,7 +82,7 @@ services:
     networks:
       - kubescope-network
     ports:
-      - "9091:9090"
+      - "${PROMETHEUS_PORT:-9091}:9090"
     depends_on:
       - kubescope
 
@@ -92,6 +100,6 @@ services:
     networks:
       - kubescope-network
     ports:
-      - "3001:3000"
+      - "${GRAFANA_PORT:-3001}:3000"
     depends_on:
       - prometheus
