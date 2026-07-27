@@ -3,9 +3,9 @@ spring:
     name: kubescope-backend
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/kubescope}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
 
   jpa:
     hibernate:
@@ -22,8 +22,8 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
   mail:
     host: ${SMTP_HOST:localhost}
@@ -39,7 +39,7 @@ spring:
 
   security:
     jwt:
-      secret: ${JWT_SECRET}
+      secret: ${JWT_SECRET:ZGV2LXNlY3JldC1jaGFuZ2UtbWUtaW4tcHJvZHVjdGlvbi1kby1ub3QtdXNl}
       expiration-ms: ${ACCESS_EXPIRATION_MS:900000}
       refresh-expiration-ms: ${REFRESH_EXPIRATION_MS:604800000}
 
@@ -52,6 +52,11 @@ management:
     health:
       probes:
         enabled: true
+  health:
+    # SMTP is best-effort (alerts only); a missing/unreachable relay must not
+    # drag the aggregate /actuator/health to DOWN. Readiness/liveness are unaffected.
+    mail:
+      enabled: false
   metrics:
     tags:
       application: ${spring.application.name}
