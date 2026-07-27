@@ -33,6 +33,7 @@ public class AdminBootstrap implements CommandLineRunner {
             return;
         }
         User u = User.builder()
+                .name("admin")
                 .email(adminEmail)
                 .password(encoder.encode(adminPassword))
                 .role(Role.ADMIN)
