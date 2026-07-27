@@ -34,3 +34,7 @@ build/
 
 ### environment variables
 /.env
+
+### Internal documents
+DOCS.md
+DEPLOY-DOKS.md
