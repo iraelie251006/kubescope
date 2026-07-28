@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  namespace: orderflow
+  labels:
+    app: postgres-depl
+    tier: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-depl
+      tier: db
+  template:
+    metadata:
+      labels:
+        app: postgres-depl
+        tier: db
+    spec:
+      volumes:
+        - name: db-volume
+          emptyDir: {}
+      containers:
+        - name: postgres-pod
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+              name: postgres-secret
+          volumeMounts:
+            - name: db-volume
+              mountPath: "/var/lib/postgresql/data"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          
