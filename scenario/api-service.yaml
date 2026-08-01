@@ -5,6 +5,8 @@ metadata:
   namespace: orderflow
 spec:
   type: ClusterIP
+  selector:
+    tier: api
   ports:
     - port: 8000
       targetPort: 80
