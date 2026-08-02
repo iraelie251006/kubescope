@@ -5,4 +5,4 @@ metadata:
   namespace: orderflow
 data:
   LOG_LEVEL: "debug"
-  MAX_CONNECTIONS: 10
+  MAX_CONNECTIONS: "10"

@@ -22,7 +22,7 @@ spec:
             - containerPort: 80
           envFrom:
             - configMapRef:
-              name: api-config
+                name: api-config
           readinessProbe:
             httpGet:
               path: /
@@ -37,7 +37,7 @@ spec:
             periodSeconds: 20
           resources:
             requests:
-              memory: "1028Mi"
+              memory: "128Mi"
               cpu: "100m"
             limits:
               memory: "256Mi"
