@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubescope-backend
+  namespace: kubescope
+  labels:
+    app.kubernetes.io/name: kubescope-backend
+    app.kubernetes.io/part-of: kubescope
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubescope-backend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kubescope-backend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/actuator/prometheus"
+        prometheus.io/port: "8080"
+    spec:
+      serviceAccountName: kubescope-backend
+      containers:
+        - name: kubescope-backend
+          image: REPLACED-LATER-ACCOUNT-ID.dkr.ecr.us-east-1.amazonaws.com/kubescope-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: kubescope-backend-config
+            - secretRef:
+                name: kubescope-backend-secrets
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            failureThreshold: 30
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubescope-backend
+  namespace: kubescope
+  labels:
+    app.kubernetes.io/name: kubescope-backend
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: kubescope-backend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
