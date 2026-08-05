@@ -37,4 +37,4 @@ build/
 
 ### Internal documents
 DOCS.md
-DEPLOY-DOKS.md
+DEPLOY-EKS.md
