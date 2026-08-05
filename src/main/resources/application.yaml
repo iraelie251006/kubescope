@@ -62,9 +62,9 @@ management:
       application: ${spring.application.name}
 
 kubescope:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
   kubernetes:
-    # Path to a kubeconfig file. Leave blank to fall back to the default
-    # (~/.kube/config) or in-cluster config when in-cluster=true.
     kubeconfig-path: ${KUBECONFIG_PATH:}
     in-cluster: ${IN_CLUSTER:false}
   collector:
