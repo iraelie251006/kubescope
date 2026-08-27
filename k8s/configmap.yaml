@@ -6,34 +6,18 @@ metadata:
   labels:
     app.kubernetes.io/name: kubescope-backend
 data:
-  # --- Kubernetes client ---
   IN_CLUSTER: "true"
-
-  # --- Collector ---
   COLLECTOR_ENABLED: "true"
   METRICS_COLLECTION_INTERVAL_SECONDS: "60"
-
-  # --- Pricing ---
   AWS_PRICING_API_ENABLED: "true"
-  # Must match the region your EKS cluster (and its nodes) run in.
   AWS_REGION: "us-east-1"
-
-  # --- Alerts ---
   ALERTS_ENABLED: "true"
   ALERT_EVALUATION_INTERVAL_SECONDS: "300"
   ALERT_COOLDOWN_MINUTES: "60"
   ALERT_FROM_EMAIL: "alerts@kubescope.io"
-
-  # --- Mail relay (non-secret bits; credentials live in the Secret) ---
   SMTP_HOST: "localhost"
   SMTP_PORT: "587"
-
-  # --- Redis (non-secret bits; host lives in the Secret since it's an endpoint) ---
   REDIS_PORT: "6379"
-
-  # --- Auth token lifetimes ---
   ACCESS_EXPIRATION_MS: "900000"
   REFRESH_EXPIRATION_MS: "604800000"
-
-  # --- CORS: point this at the deployed frontend origin ---
-  CORS_ALLOWED_ORIGINS: "https://REPLACE-WITH-FRONTEND-DOMAIN"
+  CORS_ALLOWED_ORIGINS: "https://kubescopef.vercel.app/"
