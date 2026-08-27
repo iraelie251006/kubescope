@@ -38,3 +38,5 @@ build/
 ### Internal documents
 DOCS.md
 DEPLOY-EKS.md
+
+k8s/secret.yaml
